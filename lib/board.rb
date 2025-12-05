@@ -28,6 +28,14 @@ class Board
     @grid = grid
   end
 
+  def move_piece(move)
+    departure = move[:departure]
+    destination = move[:destination]
+    piece = @grid[departure[0]][departure[1]]
+    @grid[destination[0]][destination[1]] = piece
+    @grid[departure[0]][departure[1]] = nil
+  end
+
   def display
     @grid.reverse.each.with_index { |row, i| puts build_board_line_display(row, i) }
     puts "   A B C D E F G H"
