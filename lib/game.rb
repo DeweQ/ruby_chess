@@ -1,5 +1,6 @@
 require_relative "board"
 require_relative "player"
+require_relative "chess_notation_parser"
 # Class controlling gameflow and manages users input
 class Game
   def initialize(board = Board.new, white = Player.new("Whites", :white), 
@@ -17,13 +18,23 @@ class Game
   end
 
   def make_move
-    @current.input
+    move = ChessParser.parse(@current.input)
+    @board.move_piece(move)
+  end
+
+  def play
+    loop do
+      display
+      make_move
+      toggle_current
+    end
   end
 
   def display
     puts <<-HEREDOC
         Ruby chess
         
+      Current player: #{@current.name}
     HEREDOC
     @board.display
     puts
