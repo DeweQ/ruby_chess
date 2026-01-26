@@ -13,14 +13,20 @@ class ChessParser
                           "N" => Knight,
                           "R" => Rook,
                           "B" => Bishop }.freeze
+  NOTATION = /\A([BKNQR]?)([A-H][1-8])x?([A-H][1-8])([+#]?)\z/i
 
   def self.parse(message)
-    move = {}
     message = message.upcase
-    parse_piece(move, message)
-    parse_departure(move, message)
-    parse_destination(move, message)
-    move
+    m = NOTATION.match(message)
+    { piece: parse_piece(m[1]),
+      departure: parse_location(m[2]),
+      destination: parse_location(m[3]) }
+  end
+
+  def self.parse_piece(char)
+    return Pawn if char.nil?
+
+    PIECE_ABBREVIATIONS[char]
   end
 
   def self.parse_location(location)
@@ -28,32 +34,5 @@ class ChessParser
     coords[0] = ("A".."H").to_a.index(coords[0])
     coords[1] = coords[1].to_i - 1
     coords.reverse
-  end
-
-  def self.parse_destination(move, message)
-    end_index = 2
-    if message.include?("X")
-      end_index = message.index("X") + 1
-    else
-      end_index += 1 unless move[:piece] == Pawn
-    end
-    location = message.slice(end_index, 2)
-    move[:destination] = parse_location(location)
-  end
-
-  def self.parse_departure(move, message)
-    start_index = move[:piece] == Pawn ? 0 : 1
-    location = message.slice(start_index, 2)
-    move[:departure] = parse_location(location)
-  end
-
-  def self.parse_piece(move, message)
-    move[:piece] = PIECE_ABBREVIATIONS.fetch(message[0], Pawn)
-    move[:piece] = Pawn if location?(message)
-  end
-
-  def self.location?(location)
-    coords = location.chars
-    ("A".."H").include?(coords[0]) && (1..8).include?(coords[1].to_i)
   end
 end
