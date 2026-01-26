@@ -23,6 +23,10 @@ class ChessParser
       destination: parse_location(m[3]) }
   end
 
+  def self.check?(message)
+    NOTATION.match?(message)
+  end
+
   def self.parse_piece(char)
     return Pawn if char.nil?
 
