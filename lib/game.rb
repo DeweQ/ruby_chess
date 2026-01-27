@@ -11,7 +11,9 @@ class Game
 
     @whites = white
     @blacks = black
-    @current = current.nil? ? @whites : @blacks
+    @current = current.nil? ? @whites : current
+    @exit = false
+    @commands = { "exit" => method(:enable_exit_flag) }
   end
 
   def toggle_current
@@ -19,22 +21,41 @@ class Game
   end
 
   def make_move
-    message = ""
+    input = verified_input
+
+    @board.move_piece(input[:value]) if input[:type] == "move"
+    execute_command(input[:value], input[:args]) if input[:type] == "command"
+  end
+
+  def verified_input
     loop do
-      message = @current.input
-      break if ChessParser.check?(message)
+      message = @current.input.downcase
+      return { type: "move", value: ChessParser.parse(message) } if ChessParser.check?(message)
+
+      return { type: "command", value: message } if command?(message)
 
       puts "Wrong input"
     end
+  end
 
-    move = ChessParser.parse(message)
-    @board.move_piece(move)
+  def command?(message)
+    @commands.include?(message)
+  end
+
+  def enable_exit_flag
+    @exit = true
+  end
+
+  def execute_command(command, _args = nil)
+    @commands[command].call
   end
 
   def play
     loop do
       display
       make_move
+      break if @exit
+
       toggle_current
     end
   end
