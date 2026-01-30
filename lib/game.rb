@@ -13,7 +13,8 @@ class Game
     @blacks = black
     @current = current.nil? ? @whites : current
     @exit = false
-    @commands = { "exit" => method(:enable_exit_flag) }
+    @commands = { "exit" => method(:enable_exit_flag),
+                  "clear" => method(:clear_screen) }
   end
 
   def toggle_current
@@ -22,9 +23,13 @@ class Game
 
   def make_move
     input = verified_input
-
-    @board.move_piece(input[:value]) if input[:type] == "move"
-    execute_command(input[:value], input[:args]) if input[:type] == "command"
+    case input[:type]
+    when "move"
+      @board.move_piece(input[:value])
+      toggle_current
+    when "command"
+      execute_command(input[:value], input[:args])
+    end
   end
 
   def verified_input
@@ -46,7 +51,14 @@ class Game
     @exit = true
   end
 
-  def execute_command(command, _args = nil)
+  def clear_screen
+    system "clear"
+    # display
+  end
+
+  def execute_command(command, args = nil)
+    return @commands[command].call(args) unless args.nil?
+
     @commands[command].call
   end
 
@@ -55,8 +67,6 @@ class Game
       display
       make_move
       break if @exit
-
-      toggle_current
     end
   end
 
