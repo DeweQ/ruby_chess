@@ -28,14 +28,18 @@ class Game
     end
 
     move = ChessParser.parse(message)
-    @board.move_piece(move)
+    if @board.valid_move?(move, @current) then 
+      @board.move_piece(move)
+      toggle_current
+    else 
+      puts "Invalid move"
+    end
   end
 
   def play
     loop do
       display
       make_move
-      toggle_current
     end
   end
 

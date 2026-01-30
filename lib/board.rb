@@ -27,6 +27,11 @@ class Board
   def initialize(grid = Board.generate_grid)
     @grid = grid
   end
+  
+  def valid_move?(move, current)
+    piece = @grid[move[:departure][0]][move[:departure][1]]
+    piece.class == move[:piece] && piece.color == current.color
+  end
 
   def move_piece(move)
     departure = move[:departure]
