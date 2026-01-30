@@ -28,7 +28,7 @@ class ChessParser
   end
 
   def self.parse_piece(char)
-    return Pawn if char.nil?
+    return Pawn if char == ""
 
     PIECE_ABBREVIATIONS[char]
   end
