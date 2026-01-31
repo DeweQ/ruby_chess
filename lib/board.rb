@@ -29,8 +29,12 @@ class Board
   end
   
   def valid_move?(move, current)
+    check_ready = [Pawn]
     piece = @grid[move[:departure][0]][move[:departure][1]]
-    piece.class == move[:piece] && piece.color == current.color
+    piece.class == move[:piece] && 
+    piece.color == current.color &&
+    @grid[move[:destination][0]][move[:destination][1]].class != King &&
+    (!check_ready.include?(piece.class) || piece.check_move(move,self))
   end
 
   def move_piece(move)
@@ -40,11 +44,14 @@ class Board
     @grid[destination[0]][destination[1]] = piece
     @grid[departure[0]][departure[1]] = nil
   end
+  
+  def at(coordinates)
+    @grid[coordinates[0]][coordinates[1]]
+  end
 
   def display
     @grid.reverse.each.with_index { |row, i| puts build_board_line_display(row, i) }
     puts "   A B C D E F G H"
-    nil
   end
 
   private

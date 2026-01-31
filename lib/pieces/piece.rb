@@ -8,7 +8,7 @@ class Piece
     @color = color
   end
 
-  def check_move(_move)
+  def check_move(_move, _board)
     raise "Unable to move abstract piece"
   end
 
