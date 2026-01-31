@@ -29,7 +29,7 @@ class Board
   end
   
   def valid_move?(move, current)
-    check_ready = [Pawn]
+    check_ready = [Pawn, Knight]
     piece = @grid[move[:departure][0]][move[:departure][1]]
     piece.class == move[:piece] && 
     piece.color == current.color &&
