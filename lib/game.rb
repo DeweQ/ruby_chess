@@ -13,7 +13,7 @@ class Game
     @blacks = black
     @current = current.nil? ? @whites : current
     @exit = false
-    @commands = { "exit" => method(:enable_exit_flag),
+    @commands = { "exit" => method(:terminate),
                   "clear" => method(:clear_screen) }
   end
 
@@ -47,8 +47,8 @@ class Game
     @commands.include?(message)
   end
 
-  def enable_exit_flag
-    @exit = true
+  def terminate(code = 0)
+    exit(code.to_i)
   end
 
   def clear_screen
@@ -66,7 +66,6 @@ class Game
     loop do
       display
       make_move
-      break if @exit
     end
   end
 
@@ -74,7 +73,7 @@ class Game
     puts <<-HEREDOC
         Ruby chess
       #{'  '}
-      Current player: #{@current.name}
+    Current player: #{@current.name}
     HEREDOC
     @board.display
     puts
