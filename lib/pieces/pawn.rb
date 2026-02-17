@@ -3,7 +3,7 @@ require_relative "piece"
 # A pawn class.
 class Pawn < Piece
   def initialize(color)
-    super(color)
+    super
     @symbol = "♟".colorize(color) # color == :white ? "♙" : "♟"
   end
 
@@ -15,7 +15,7 @@ class Pawn < Piece
     result = []
     direction = color == :white ? 1 : -1
     (1..2).each do |i|
-      newpos = [position[0] + i * direction, position[1]]
+      newpos = [position[0] + (i * direction), position[1]]
       break unless board.at(newpos).nil?
 
       result << newpos

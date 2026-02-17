@@ -28,10 +28,10 @@ class Game
     end
 
     move = ChessParser.parse(message)
-    if @board.valid_move?(move, @current) then 
+    if @board.valid_move?(move, @current)
       @board.move_piece(move)
       toggle_current
-    else 
+    else
       puts "Invalid move"
     end
   end

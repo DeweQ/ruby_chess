@@ -13,7 +13,7 @@ class ChessParser
                           "N" => Knight,
                           "R" => Rook,
                           "B" => Bishop }.freeze
-  NOTATION = /\A([BKNQR]?)([A-H][1-8])x?([A-H][1-8])([+#]?)\z/i
+  NOTATION = /\A([BKNQR]?)([A-H][1-8])x?([A-H][1-8])([+#]?)\z/i.freeze
 
   def self.parse(message)
     message = message.upcase
