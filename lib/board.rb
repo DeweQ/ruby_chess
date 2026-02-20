@@ -29,9 +29,9 @@ class Board
   end
 
   def valid_move?(move, current)
-    check_ready = [Pawn, Knight]
+    check_ready = [Pawn, Knight, Bishop]
     piece = @grid[move[:departure][0]][move[:departure][1]]
-    piece.class.instance_of?(move[:piece]) &&
+    piece.instance_of?(move[:piece]) &&
       piece.color == current.color &&
       @grid[move[:destination][0]][move[:destination][1]].class != King &&
       (!check_ready.include?(piece.class) || piece.check_move(move, self))
