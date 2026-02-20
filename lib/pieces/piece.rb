@@ -8,8 +8,8 @@ class Piece
     @color = color
   end
 
-  def check_move(_move, _board)
-    raise "Unable to move abstract piece"
+  def check_move(move, board)
+    possible_moves(move[:departure], board).include?(move[:destination])
   end
 
   def to_s
