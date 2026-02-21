@@ -11,23 +11,26 @@ class Game
 
     @whites = white
     @blacks = black
-    @current = current.nil? ? @whites : @blacks
+    @current = current.nil? ? @whites : current
+    @exit = false
+    @commands = { "exit" => method(:terminate),
+                  "clear" => method(:clear_screen) }
   end
 
   def toggle_current
     @current = @current == @whites ? @blacks : @whites
   end
 
-  def make_move
-    message = ""
-    loop do
-      message = @current.input
-      break if ChessParser.check?(message)
-
-      puts "Wrong input"
+  def evaluate(input)
+    case input[:type]
+    when "move"
+      make_move(input[:value])
+    when "command"
+      execute_command(input[:value], input[:args])
     end
+  end
 
-    move = ChessParser.parse(message)
+  def make_move(move)
     if @board.valid_move?(move, @current)
       @board.move_piece(move)
       toggle_current
@@ -36,10 +39,44 @@ class Game
     end
   end
 
+  def read
+    loop do
+      message = @current.input.downcase
+      return { type: "move", value: ChessParser.parse(message) } if ChessParser.check?(message)
+
+      return { type: "command", value: message } if command?(message)
+
+      puts "Wrong input"
+    end
+  end
+
+  def command?(message)
+    @commands.include?(message)
+  end
+
+  def terminate(code = 0)
+    exit(code.to_i)
+  end
+
+  def clear_screen
+    system "clear"
+  end
+
+  def execute_command(command, args = nil)
+    return @commands[command].call(args) unless args.nil?
+
+    @commands[command].call
+  end
+
   def play
+    run_repl
+  end
+
+  def run_repl
     loop do
       display
-      make_move
+      input = read
+      evaluate(input)
     end
   end
 
@@ -47,7 +84,7 @@ class Game
     puts <<-HEREDOC
         Ruby chess
       #{'  '}
-      Current player: #{@current.name}
+    Current player: #{@current.name}
     HEREDOC
     @board.display
     puts
