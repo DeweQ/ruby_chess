@@ -103,14 +103,16 @@ module Chess
                   board: @board.to_json,
                   whites: @whites.to_json,
                   blacks: @blacks.to_json,
-                  current: nil
+                  current: @current == @whites
                 })
     end
 
-    def self.form_json(string)
+    def self.from_json(string)
       data = JSON.parse(string)
-      new(Board.from_json(data["board"]), Player.from_json(data["whites"]), Player.from_json(data["blacks"]),
-          data["current"])
+      whites = Player.from_json(data["whites"])
+      blacks = Player.from_json(data["blacks"])
+      current = data["current"] ? whites : blacks
+      new(Board.from_json(data["board"]), whites, blacks, current)
     end
   end
 end
