@@ -2,6 +2,7 @@ require_relative "board"
 require_relative "player"
 require "json"
 require_relative "chess_notation_parser"
+require_relative "save_manager"
 module Chess
   # Class controlling gameflow and manages users input
   class Game
@@ -22,7 +23,8 @@ module Chess
 
     def initialize_commands
       { "exit" => method(:terminate),
-        "clear" => method(:clear_screen) }
+        "clear" => method(:clear_screen),
+        "save" => method(:save_game) }
     end
 
     def toggle_current
@@ -34,7 +36,7 @@ module Chess
       when "move"
         make_move(input[:value])
       when "command"
-        execute_command(input[:value], input[:args])
+        execute_command(input[:value], *input[:args])
       end
     end
 
@@ -52,7 +54,8 @@ module Chess
         message = @current.input.downcase
         return { type: "move", value: ChessParser.parse(message) } if ChessParser.check?(message)
 
-        return { type: "command", value: message } if command?(message)
+        message = message.split
+        return { type: "command", value: message[0], args: message[1..] } if command?(message[0])
 
         puts "Wrong input"
       end
@@ -70,10 +73,12 @@ module Chess
       system "clear"
     end
 
-    def execute_command(command, args = nil)
-      return @commands[command].call(args) unless args.nil?
+    def save_game(*args)
+      Chess.save(to_json, *args)
+    end
 
-      @commands[command].call
+    def execute_command(command, *args)
+      @commands[command].call(*args)
     end
 
     def play
