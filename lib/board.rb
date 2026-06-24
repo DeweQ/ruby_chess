@@ -28,6 +28,7 @@ module Chess
 
     def initialize(grid = Board.generate_grid)
       @grid = grid
+      @check_status = { status: "none" }
     end
 
     def valid_move?(move, current)
@@ -66,6 +67,29 @@ module Chess
 
     def to_json(*_args)
       JSON.dump(@grid.map { |x| x.map(&:to_json) })
+    end
+
+    def figures
+      result = {}
+      @grid.each.with_index do |line, x|
+        line.each.with_index do |cell, y|
+          next unless cell
+
+          result[[x, y]] = cell
+          yield cell, [x, y] if block_given?
+        end
+      end
+    end
+
+    def calculate_check_status
+      figures do |cell, coords|
+        if cell.possible_moves(coords, self).any? do |moves|
+          at(moves).instance_of?(King) && cell.color != at(moves).color
+        end
+          return cell.color == :white ? :black : :white
+        end
+      end
+      :none
     end
 
     private

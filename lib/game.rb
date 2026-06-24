@@ -98,6 +98,7 @@ module Chess
         Ruby chess
       #{'  '}
     Current player: #{@current.name}
+    Check status: #{@board.calculate_check_status}
       HEREDOC
       @board.display
       puts
