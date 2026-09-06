@@ -32,19 +32,29 @@ module Chess
     end
 
     def valid_move?(move, current)
-      piece = @grid[move[:departure][0]][move[:departure][1]]
+      piece = at(move[:departure])
       piece.instance_of?(move[:piece]) &&
         piece.color == current.color &&
-        @grid[move[:destination][0]][move[:destination][1]].class != King &&
+        at(move[:destination]).class != King &&
         piece.check_move(move, self)
     end
 
     def move_piece(move)
       departure = move[:departure]
       destination = move[:destination]
+      stash = at(destination)
       piece = @grid[departure[0]][departure[1]]
-      @grid[destination[0]][destination[1]] = piece
-      @grid[departure[0]][departure[1]] = nil
+      set(destination, piece)
+      set(departure, nil)
+      stash
+    end
+
+    def rollback_move(move, stash)
+      departure = move[:departure]
+      destination = move[:destination]
+      piece = at(destination)
+      set(destination, stash)
+      set(departure, piece)
     end
 
     def at(coordinates)
@@ -93,6 +103,10 @@ module Chess
     end
 
     private
+
+    def set(coordinates, piece)
+      @grid[coordinates[0]][coordinates[1]] = piece
+    end
 
     def build_board_line_display(row, row_index)
       result = "  #{8 - row_index}"
