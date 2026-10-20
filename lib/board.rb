@@ -36,7 +36,15 @@ module Chess
       piece.instance_of?(move[:piece]) &&
         piece.color == current.color &&
         at(move[:destination]).class != King &&
-        piece.check_move(move, self)
+        piece.check_move(move, self) &&
+        move_end_without_check?(move, current.color)
+    end
+
+    def move_end_without_check?(move, current_color)
+      stash = move_piece(move)
+      result = calculate_check_status == current_color
+      rollback_move(move, stash)
+      !result
     end
 
     def move_piece(move)
