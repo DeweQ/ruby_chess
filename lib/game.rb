@@ -102,6 +102,9 @@ module Chess
       HEREDOC
       @board.display
       puts
+      return unless @board.is_checkmate?(@current.color)
+
+      puts "GAME OVER"
     end
 
     def to_json(*_args)

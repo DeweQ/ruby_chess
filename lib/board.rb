@@ -97,6 +97,7 @@ module Chess
           yield cell, [x, y] if block_given?
         end
       end
+      result
     end
 
     def calculate_check_status
@@ -108,6 +109,18 @@ module Chess
         end
       end
       :none
+    end
+
+    def is_checkmate?(color)
+      return false unless calculate_check_status == color
+
+      colored_figures = figures.select { |_coords, figure| figure.color == color }
+      colored_figures.any? do |coords, figure|
+        return false if figure.possible_moves(coords, self).any? do |move|
+          move_end_without_check?({ departure: coords, destination: move }, color)
+        end
+      end
+      true
     end
 
     private
