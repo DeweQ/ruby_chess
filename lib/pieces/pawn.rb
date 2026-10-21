@@ -23,7 +23,7 @@ module Chess
       [-1, 1].each do |i|
         next unless board.in_bounds?(newpos = [position[0] + @direction, position[1] + i])
 
-        result << newpos if board.at(newpos)&.color != color
+        result << newpos if board.at(newpos) && board.at(newpos).color != color
       end
       result
     end

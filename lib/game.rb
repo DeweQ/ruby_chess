@@ -98,9 +98,13 @@ module Chess
         Ruby chess
       #{'  '}
     Current player: #{@current.name}
+    Check status: #{@board.calculate_check_status}
       HEREDOC
       @board.display
       puts
+      return unless @board.is_checkmate?(@current.color)
+
+      puts "GAME OVER"
     end
 
     def to_json(*_args)
